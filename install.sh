@@ -3,11 +3,11 @@ IFS=$'\n'
 
 mkdir -p "$HOME/bin"
 
-for tool in $(find ./src -name '*.sh')
+for tool in $(find ./utilities -name '*.sh')
 do
   linkname="$HOME/bin/$(basename $tool .sh)"
   echo "Creating symlink $linkname"
-  ln -rs $tool $linkname
+  ln -rsf $tool $linkname
 done
 
 echo "Make sure to add $HOME/bin to PATH"
