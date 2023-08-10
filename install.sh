@@ -1,20 +1,18 @@
 #!/bin/bash
 IFS=$'\n'
 
+. "./install_helper.sh"
+
 mkdir -p "$HOME/bin"
 
 for tool in $(find ./utilities -name '*.sh')
 do
-  linkname="$HOME/bin/$(basename $tool .sh)"
-  echo "Creating symlink $linkname"
-  ln -rsf $tool $linkname
+  install_command $tool
 done
 
 for tool in $(find ./startup -name '*.sh')
 do
-  linkname="$HOME/bin/.$(basename $tool .sh)"
-  echo "Creating symlink $linkname"
-  ln -rsf $tool $linkname
+  install_internal $tool
 done
 
 echo "Make sure to add $HOME/bin to PATH"

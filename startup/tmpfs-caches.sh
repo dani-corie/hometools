@@ -11,6 +11,8 @@ DIRLIST=(
   "$HOME/.cache/mozilla"
   "$HOME/.var/app/com.discordapp.Discord/config/discord/Cache",discord-cache
   "$HOME/.var/app/com.discordapp.Discord/config/discord/Code Cache",discord-code-cache
+  "$HOME/.var/app/com.discordapp.Discord/config/discord/DawnCache",discord-dawn-cache
+  "$HOME/.var/app/com.discordapp.Discord/config/discord/GPUCache",discord-gpu-cache
 )
 
 tmpdir="/tmp/$USER-cache"
