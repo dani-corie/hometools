@@ -2,7 +2,9 @@
 # This script creates a user folder in /etc/tmp (which should by all means be
 # tmpfs), and symlinks the specified directories to that.
 # The list of cache folders can contain single entries or comma-separated
-# tuples: local folder path,tmpfs folder name
+# tuples: local folder path,mode,tmpfs folder name
+# mode can be del or copy; copy is for cache folders with structures that
+# aren't recreated on startup (typically Electron apps like Discord)
 
 DIRLIST=(
   "$HOME/.cache/BraveSoftware",del
@@ -17,6 +19,7 @@ DIRLIST=(
   "$HOME/.var/app/com.discordapp.Discord/config/discord/DawnGraphiteCache",copy,flatpak-discord-electron-DawnGraphiteCache
   "$HOME/.var/app/com.discordapp.Discord/config/discord/DawnWebGPUCache",copy,flatpak-discord-electron-DawnWebGPUCache
   "$HOME/.var/app/com.discordapp.Discord/config/discord/GPUCache",copy,flatpak-discord-electron-GPUCache
+  "$HOME/.var/app/org.telegram.desktop/cache",copy,flatpak-telegram-main-cache 
 )
 
 tmpdir="/tmp/$USER-cache"
@@ -28,26 +31,35 @@ do
   IFS=$','
   set $folder
   if [[ -L "$1" || -e "$1" ]]; then
-    if [ -z "$3" ]; then
-      tmpfolder="$tmpdir/$(basename "$1")"
+    if mountpoint -q "$1"; then
+      echo "ignoring entry $1: is an active mount point (maybe already set up in copy mode)" >&2
     else
-      tmpfolder="$tmpdir/$3"
-    fi
-    mkdir -p "$tmpfolder"
-
-    if [ "$2" == "copy" ]; then
-      if [ -L "$1" ]; then
-        echo "ignoring entry $1: copy mode specified, but original is a symlink"
+      # do we have a target folder name specified?
+      if [ -z "$3" ]; then
+        tmpfolder="$tmpdir/$(basename "$1")"
       else
-        cp -a "$1/." "$tmpfolder/"
-        bindfs -o nonempty --no-allow-other "$tmpfolder" "$1"
+        tmpfolder="$tmpdir/$3"
       fi
-    elif [ $2 == "del" ]; then
-      rm -rf "$1"
-      ln -sf "$tmpfolder" "$1"
-    else
-      echo "ignoring entry $1: please specify copy or del"
+      # create target if doesn't exist
+      mkdir -p "$tmpfolder"
+
+      # copy mode or del mode
+      if [ "$2" == "copy" ]; then
+        if [ -L "$1" ]; then
+          echo "ignoring entry $1: copy mode specified, but original is a symlink" >&2
+        else
+          cp -a "$1/." "$tmpfolder/"
+          bindfs -o nonempty --no-allow-other "$tmpfolder" "$1"
+        fi
+      elif [ $2 == "del" ]; then
+        rm -rf "$1"
+        ln -sf "$tmpfolder" "$1"
+      else
+        echo "ignoring entry $1: please specify copy or del" >&2
+      fi
     fi
+  else
+    echo "ignoring entry $1: no such folder" >&2
   fi
   unset IFS
 done

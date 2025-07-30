@@ -2,25 +2,29 @@
 
 These are scripts to be installed in ~/bin for everyday use.
 
-## deb_backport
+## clear-zfs-snapshots
+
+Remove zfs snapshots based on a wildcard string
+
+## deb-backport
 
 Do a simple naive backport of a .deb source package to current distro.
 
-## mnt_ecrypt
+## ibus-reset
+
+Hotfix if gtk / gnome apps don't accept input inside a network namespace
+
+## mnt-ecrypt
 
 Mount an encrypted folder via ecrypt.
 
-## mnt_zfscrypt
+## mnt-zfscrypt
 
-Mount an encrypted, non-automounted (with OS-managed mounting) ZFS filesystem.
+Mount an encrypted, non-automounted (OS mtab mount) ZFS filesystem.
 
-## pdf_foldablezine
+## pdf-foldablezine
 
-Turn a pdf booklet into a single foldable page.
-
-## remove-zfs-snapshots
-
-A script for clearing up zfs snapshots... In complex filesystems, such as the default zfs installation of Ubuntu 22.04, it's easy to get swamped by automatically generated snapshots. Here's a tool to take out the trash at will.
+Turn an 8-page pdf booklet into a single foldable page.
 
 ## sshfwd
 
